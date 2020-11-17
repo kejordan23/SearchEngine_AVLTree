@@ -1,0 +1,8 @@
+//
+// Created by Kylie Jordan on 11/16/20.
+//
+
+#ifndef FINALPROJECT_AUTHINDEX_H
+#define FINALPROJECT_AUTHINDEX_H
+
+#endif //FINALPROJECT_AUTHINDEX_H
