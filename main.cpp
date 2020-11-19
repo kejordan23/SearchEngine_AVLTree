@@ -29,10 +29,27 @@ int main(int argc, char* argv[]) {
         if (!input1.is_open() || !input2.is_open())
             cout << "unable to open file" << endl;*/
 
-        DSAVLTree<int> a =DSAVLTree<int>();
+        DSAVLTree<Word> a =DSAVLTree<Word>();
         a.print();
-        for(int i = 0; i<10; i++)
-            a.insert(i);
+        string z = "hello";
+        string b = "world";
+        string c = "my";
+        string d = "name";
+        string e = "is";
+        string f = "Kylie";
+        Word g(z);
+        Word h(b);
+        Word i(c);
+        Word j(d);
+        Word k(e);
+        Word l(f);
+        a.insert(g);
+        a.insert(h);
+        a.insert(i);
+        a.insert(j);
+        a.insert(k);
+        a.insert(k);
+
         a.print();
 
         //Handler();

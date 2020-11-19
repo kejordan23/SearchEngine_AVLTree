@@ -13,11 +13,11 @@
 #include "Word.h"
 #include "WordIndex.h"
 #include "AuthIndex.h"
-#include "rapidjson/include/rapidjson/rapidjson.h"
-#include "rapidjson/include/rapidjson/document.h"
-#include "rapidjson/include/rapidjson/writer.h"
-#include "rapidjson/include/rapidjson/stringbuffer.h"
-#include "rapidjson/include/rapidjson/istreamwrapper.h"
+#include "include/rapidjson/rapidjson.h"
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/writer.h"
+#include "include/rapidjson/stringbuffer.h"
+#include "include/rapidjson/istreamwrapper.h"
 
 using namespace std;
 namespace fs = __fs::filesystem;
@@ -25,12 +25,12 @@ using namespace rapidjson;
 
 class Indexer{
     private:
-        //WordIndex words;
+        WordIndex words;
         //AuthIndex authors;
     public:
     Indexer(){};
     int getDir_FileSystem();
-    void remStpWords(string&);
+    bool isStpWord(string&);
     void stem(string&);
     void addToIndex(bool, string&, string&, string&);
     //AuthIndex getAuthIndex();

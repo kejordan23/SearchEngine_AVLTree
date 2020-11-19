@@ -77,7 +77,7 @@ void DSAVLTree<T>::insert(T& val, AVLNode<T>*& t){
     else if(val>(t->data)){
         insert(val, t->right);
         if(height(t->right) - height(t->left) == 2){
-            if(val<(t->right->data))        //C4
+            if(val>(t->right->data))        //C4
                 rotWRightCh(t);
             else                            //C3
                 doubleWRightCh(t);
@@ -133,7 +133,7 @@ template <typename T>
 void DSAVLTree<T>::inOrder(AVLNode<T>*& t){
     if(t!= nullptr){
         inOrder(t->left);
-        cout<<t->data<<endl;
+        t->data.print();
         inOrder(t->right);
     }
 }
