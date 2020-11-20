@@ -17,12 +17,16 @@ using namespace std;
 
 class WordIndex{
     private:
-        DSAVLTree<string> words;
+        DSAVLTree<Word> words;
     public:
-        WordIndex();
-        void addWord(Word);
+        WordIndex(){};
+        void addWord(Word w){
+            words.insert(w);
+        };
         set<string>& findDocs(Word);
-        void print();
+        void print(){
+            words.print();
+        };
 };
 
 #endif //FINALPROJECT_WORDINDEX_H

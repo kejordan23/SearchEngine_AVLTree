@@ -6,6 +6,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <cctype>
 #include <cstring>
 #include <dirent.h>
 #include <filesystem>
@@ -50,10 +51,20 @@ int Indexer::getDir_FileSystem(){
                   << "Offset : " << d.GetErrorOffset() << '\n';
         return EXIT_FAILURE;
     }
-    Value& s = d["body_text"];
-    //Value& t = s["text"];
-    for(SizeType i = 0; i<s.Size(); i++)
-        cout << s[i]["text"].GetString() << endl;
+    Value& id = d["paper_id"];
+    string iD = id.GetString();
+    string type = "title";
+    Value& s = d["metadata"];
+    Value& t = s["title"];
+    string z = t.GetString();
+    addToIndex(true, z, iD, type);
+    Value& g = d["body_text"];
+    type = "body_text";
+    for(SizeType i = 0; i<g.Size(); i++) {
+        string p = g[i]["text"].GetString();
+        addToIndex(true, p, iD, type);
+    }
+    words.print();
     //std::cout << buffer.GetString() << std::endl;
     return 0;
 }
@@ -69,17 +80,25 @@ bool Indexer::isStpWord(string& word){
 void Indexer::stem(string&){
 
 }
+void Indexer::remPunc(string& str){
+    if(ispunct(str[str.size()-1]))
+        str.erase(str.size()-2, str.size()-1);
+}
 void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
     string word;
     char delim = ' ';
     istringstream temp(passage);
     if(type) {
         while (getline(temp, word, delim)) {
-            if(!isStpWord(word)) {
-                Word t(word);
-                t.addID(id);
-                t.addLoc(loc);
-                words.addWord(t);
+            if(word.size() > 2) {
+                remPunc(word);
+                if (!isStpWord(word)) {
+                    Word t(word);
+                    t.addID(id);
+                    t.addLoc(loc);
+                    words.addWord(t);
+                }
+
             }
         }
     }
@@ -87,7 +106,7 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
 }
 //AuthIndex getAuthIndex();
 WordIndex& Indexer::getWordIndex(){
-    //return words;
+    return words;
 }
 void Indexer::print(){
 

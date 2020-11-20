@@ -32,6 +32,7 @@ class Indexer{
     int getDir_FileSystem();
     bool isStpWord(string&);
     void stem(string&);
+    void remPunc(string&);
     void addToIndex(bool, string&, string&, string&);
     //AuthIndex getAuthIndex();
     WordIndex& getWordIndex();

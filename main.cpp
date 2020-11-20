@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
         if (!input1.is_open() || !input2.is_open())
             cout << "unable to open file" << endl;*/
 
-        DSAVLTree<Word> a =DSAVLTree<Word>();
+        /*DSAVLTree<Word> a =DSAVLTree<Word>();
         a.print();
         string z = "hello";
         string b = "world";
@@ -50,9 +50,9 @@ int main(int argc, char* argv[]) {
         a.insert(k);
         a.insert(k);
 
-        a.print();
+        a.print();*/
 
-        //Handler();
+        Handler();
     }
     return 0;
 }
