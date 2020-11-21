@@ -30,7 +30,6 @@ int main(int argc, char* argv[]) {
             cout << "unable to open file" << endl;*/
 
         /*DSAVLTree<Word> a =DSAVLTree<Word>();
-        a.print();
         string z = "hello";
         string b = "world";
         string c = "my";
@@ -48,11 +47,22 @@ int main(int argc, char* argv[]) {
         a.insert(i);
         a.insert(j);
         a.insert(k);
-        a.insert(k);
+        a.insert(l);
 
-        a.print();*/
+        a.print();
+
+        Word q(f);
+        Word t = a.find(q);
+        if(a.isFound()) {
+            cout << "found" << endl;
+            t.print();
+        }
+        else
+            cout<<"not found"<<endl;*/
+
 
         Handler();
+
     }
     return 0;
 }

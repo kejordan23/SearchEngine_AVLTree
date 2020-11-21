@@ -26,7 +26,9 @@ template <typename T>
 class DSAVLTree{
     private:
         AVLNode<T>* root;
+        bool found;
         void insert(T&, AVLNode<T>*&);
+        T& find(T&, AVLNode<T>*&);
     public:
         DSAVLTree(){ root = nullptr;};
         DSAVLTree(DSAVLTree<T>&);
@@ -48,7 +50,11 @@ class DSAVLTree{
         int height(AVLNode<T>*& t){
             return t == nullptr ? -1 : t->height;
         };
-        T& find(T&);
+        T& find(T& data){
+            return find(data, root);
+        };
+        bool isFound(){return found;};
+        void setFound(bool check){found = check;};
         void remove(T&);
         bool isEmpty(){
             return (root==nullptr);
@@ -115,8 +121,19 @@ void DSAVLTree<T>::doubleWRightCh(AVLNode<T>*& k1){
     rotWRightCh(k1);
 }
 template <typename T>
-T& DSAVLTree<T>::find(T&){
-
+T& DSAVLTree<T>::find(T& data, AVLNode<T>*& t){
+    if (t == nullptr) {
+        setFound(false);
+        return data;
+    }
+    else if(data<t->data)
+        return find(data, t->left);
+    else if(data>t->data)
+        return find(data, t->right);
+    else{
+        setFound(true);
+        return t->data;
+    }
 }
 template <typename T>
 void DSAVLTree<T>::remove(T&){

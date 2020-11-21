@@ -21,51 +21,58 @@
 #include "include/rapidjson/writer.h"
 #include "include/rapidjson/stringbuffer.h"
 #include "include/rapidjson/istreamwrapper.h"
+#include "stmr.h"
+#include "stmr.c"
 
 using namespace std;
 namespace fs = __fs::filesystem;
 using namespace rapidjson;
 
-const char * p = "cs2341_data";
+string p = "cs2341_data";
 
 int Indexer::getDir_FileSystem(){
     vector<fs::path> files;
-    for (auto & entry : fs::directory_iterator(p))
+    for (const auto & entry : fs::directory_iterator(p))
         files.emplace_back(entry.path());
 
 
     Document d;
-    ifstream fp(files[0]);
-    IStreamWrapper isw(fp);
-    d.ParseStream(isw);
-    /*for (auto each:files) {
-        cout << each << endl;
-    }*/
-    StringBuffer buffer;
-    Writer<StringBuffer> writer(buffer);
-    d.Accept(writer);
+    for(int i = 0; i<100; i++) {
+        docNum = i;
+        ifstream fp(files[i]);
+        IStreamWrapper isw(fp);
+        d.ParseStream(isw);
 
-    if ( d.HasParseError() )
-    {
-        std::cout << "Error  : " << d.GetParseError()  << '\n'
-                  << "Offset : " << d.GetErrorOffset() << '\n';
-        return EXIT_FAILURE;
+        StringBuffer buffer;
+        Writer<StringBuffer> writer(buffer);
+        d.Accept(writer);
+
+        if (d.HasParseError()) {
+            std::cout << "Error  : " << d.GetParseError() << '\n'
+                      << "Offset : " << d.GetErrorOffset() << '\n';
+            return EXIT_FAILURE;
+        }
+        Value &id = d["paper_id"];
+        string iD = id.GetString();
+        string type = "title";
+        Value &s = d["metadata"];
+        Value &t = s["title"];
+        string z = t.GetString();
+        addToIndex(true, z, iD, type);
+        Value &l = d["abstract"];
+        type = "abstract";
+        for (SizeType i = 0; i < l.Size(); i++) {
+            string p = l[i]["text"].GetString();
+            addToIndex(true, p, iD, type);
+        }
+        Value &g = d["body_text"];
+        type = "body_text";
+        for (SizeType i = 0; i < g.Size(); i++) {
+            string p = g[i]["text"].GetString();
+            addToIndex(true, p, iD, type);
+        }
     }
-    Value& id = d["paper_id"];
-    string iD = id.GetString();
-    string type = "title";
-    Value& s = d["metadata"];
-    Value& t = s["title"];
-    string z = t.GetString();
-    addToIndex(true, z, iD, type);
-    Value& g = d["body_text"];
-    type = "body_text";
-    for(SizeType i = 0; i<g.Size(); i++) {
-        string p = g[i]["text"].GetString();
-        addToIndex(true, p, iD, type);
-    }
-    words.print();
-    //std::cout << buffer.GetString() << std::endl;
+    //words.print();
     return 0;
 }
 bool Indexer::isStpWord(string& word){
@@ -77,8 +84,12 @@ bool Indexer::isStpWord(string& word){
     }
     return false;
 }
-void Indexer::stem(string&){
-
+void Indexer::stemm(string& word){
+    char* test = new char[word.length()+1];
+    strcpy(test, word.c_str());
+    int end = stem(test, 0, strlen(test)-1); //https://github.com/wooorm/stmr.c.git
+    test[end+1] = 0;
+    word = test;
 }
 void Indexer::remPunc(string& str){
     if(ispunct(str[str.size()-1]))
@@ -93,10 +104,19 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
             if(word.size() > 2) {
                 remPunc(word);
                 if (!isStpWord(word)) {
+                    stemm(word);
                     Word t(word);
-                    t.addID(id);
-                    t.addLoc(loc);
-                    words.addWord(t);
+                    Word& temp = words.find(t);
+                    if(words.isFound() && docNum != 0){
+                        temp.addID(id);
+                        temp.addLoc(loc);
+                        words.setFound(false);
+                    }
+                    else {
+                        t.addID(id);
+                        t.addLoc(loc);
+                        words.addWord(t);
+                    }
                 }
 
             }

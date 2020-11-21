@@ -9,15 +9,15 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include <set>
+#include <vector>
 
 using namespace std;
 
 class Word{
     private:
         string word;
-        set<string> docIDs;
-        set<string> locations;
+        vector<string> docIDs;
+        vector<string> locations;
     public:
         Word(string& w): word(w){};
         string& getWord(){ return word;};
@@ -34,13 +34,13 @@ class Word{
                 return false;
         };
         void addID(string& d){
-            docIDs.insert(d);
+            docIDs.push_back(d);
         };
         void addLoc(string& l){
-            locations.insert(l);
+            locations.push_back(l);
         };
-        set<string>& getIDs(){ return docIDs;};
-        set<string>& getLocs(){ return locations;};
+        vector<string>& getIDs(){ return docIDs;};
+        vector<string>& getLocs(){ return locations;};
         void print(){
             cout<<word<<endl;
             auto z = docIDs.begin();

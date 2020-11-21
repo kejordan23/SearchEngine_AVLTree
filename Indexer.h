@@ -27,11 +27,12 @@ class Indexer{
     private:
         WordIndex words;
         //AuthIndex authors;
+        int docNum;
     public:
     Indexer(){};
     int getDir_FileSystem();
     bool isStpWord(string&);
-    void stem(string&);
+    void stemm(string&);
     void remPunc(string&);
     void addToIndex(bool, string&, string&, string&);
     //AuthIndex getAuthIndex();
