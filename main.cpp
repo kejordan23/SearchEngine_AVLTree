@@ -11,6 +11,7 @@
 #include <vector>
 #include "DSAVLTree.h"
 #include "Handler.h"
+#include "DSHashTable.h"
 
 using namespace std;
 
@@ -49,16 +50,8 @@ int main(int argc, char* argv[]) {
         a.insert(k);
         a.insert(l);
 
-        a.print();
+        a.print();*/
 
-        Word q(f);
-        Word t = a.find(q);
-        if(a.isFound()) {
-            cout << "found" << endl;
-            t.print();
-        }
-        else
-            cout<<"not found"<<endl;*/
 
 
         Handler();

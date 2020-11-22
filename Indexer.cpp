@@ -85,11 +85,21 @@ bool Indexer::isStpWord(string& word){
     return false;
 }
 void Indexer::stemm(string& word){
-    char* test = new char[word.length()+1];
-    strcpy(test, word.c_str());
-    int end = stem(test, 0, strlen(test)-1); //https://github.com/wooorm/stmr.c.git
-    test[end+1] = 0;
-    word = test;
+    string val = stemTable.find(word);
+    if(stemTable.isFound()){
+        word = val;
+        stemTable.setFound(false);
+    }
+    else {
+        string temp;
+        char *test = new char[word.length() + 1];
+        strcpy(test, word.c_str());
+        int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
+        test[end + 1] = 0;
+        temp = test;
+        stemTable.insert(word, temp);
+        word = test;
+    }
 }
 void Indexer::remPunc(string& str){
     if(ispunct(str[str.size()-1]))
