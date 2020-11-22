@@ -51,10 +51,10 @@ int main(int argc, char* argv[]) {
         a.insert(l);
 
         a.print();*/
-
-
-
-        Handler();
+        string word = argv[1];
+        string path = argv[2];
+        Handler(word, path);
+        //out<<word<<path<<endl;
 
     }
     return 0;

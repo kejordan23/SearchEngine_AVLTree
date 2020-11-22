@@ -26,7 +26,9 @@ class WordIndex{
         Word& find(Word& t){ return words.find(t);};
         bool isFound(){ return words.isFound();};
         void setFound(bool r){words.setFound(r);};
-        set<string>& findDocs(Word);
+        void findDocs(Word word){
+            word.printDocs();
+        };
         void print(){
             words.print();
         };

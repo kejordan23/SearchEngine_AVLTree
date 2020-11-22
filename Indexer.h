@@ -33,12 +33,14 @@ class Indexer{
     public:
     Indexer(){};
     int getDir_FileSystem();
+    int getDir_FileSystemDemo(string&);
     bool isStpWord(string&);
     void stemm(string&);
     void remPunc(string&);
     void addToIndex(bool, string&, string&, string&);
     //AuthIndex getAuthIndex();
     WordIndex& getWordIndex();
+    void getDocs(string&);
     void print();
 };
 

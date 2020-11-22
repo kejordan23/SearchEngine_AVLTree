@@ -30,6 +30,53 @@ using namespace rapidjson;
 
 string p = "cs2341_data";
 
+int Indexer::getDir_FileSystemDemo(string& str){
+    vector<fs::path> files;
+    for (const auto & entry : fs::directory_iterator(str))
+        if(entry.path() != (str+"/.DS_Store"))
+            files.emplace_back(entry.path());
+
+
+    Document d;
+    for(int i = 0; i<files.size(); i++) {
+        docNum = i;
+        ifstream fp(files[i]);
+        IStreamWrapper isw(fp);
+        d.ParseStream(isw);
+
+        StringBuffer buffer;
+        Writer<StringBuffer> writer(buffer);
+        d.Accept(writer);
+
+        if (d.HasParseError()) {
+            std::cout << "Error  : " << d.GetParseError() << '\n'
+                      << "Offset : " << d.GetErrorOffset() << '\n';
+            return EXIT_FAILURE;
+        }
+        Value &id = d["paper_id"];
+        string iD = id.GetString();
+        string type = "title";
+        Value &s = d["metadata"];
+        Value &t = s["title"];
+        string z = t.GetString();
+        addToIndex(true, z, iD, type);
+        Value &l = d["abstract"];
+        type = "abstract";
+        for (SizeType i = 0; i < l.Size(); i++) {
+            string p = l[i]["text"].GetString();
+            addToIndex(true, p, iD, type);
+        }
+        Value &g = d["body_text"];
+        type = "body_text";
+        for (SizeType i = 0; i < g.Size(); i++) {
+            string p = g[i]["text"].GetString();
+            addToIndex(true, p, iD, type);
+        }
+    }
+    //words.print();
+    return 0;
+}
+
 int Indexer::getDir_FileSystem(){
     vector<fs::path> files;
     for (const auto & entry : fs::directory_iterator(p))
@@ -137,6 +184,19 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
 //AuthIndex getAuthIndex();
 WordIndex& Indexer::getWordIndex(){
     return words;
+}
+void Indexer::getDocs(string& word){
+    char *test = new char[word.length() + 1];
+    strcpy(test, word.c_str());
+    int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
+    test[end + 1] = 0;
+    word = test;
+    Word temp(word);
+    Word t = words.find(temp);
+    if(words.isFound())
+        words.findDocs(t);
+    else
+        cout<<"word not found"<<endl;
 }
 void Indexer::print(){
 
