@@ -5,8 +5,6 @@
 #ifndef FINALPROJECT_HANDLER_H
 #define FINALPROJECT_HANDLER_H
 
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <cstdlib>
 #include "Query.h"

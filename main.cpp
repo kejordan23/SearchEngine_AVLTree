@@ -2,16 +2,10 @@
 // Created by Kylie Jordan on 11/13/20.
 //
 #define CATCH_CONFIG_RUNNER
-#include <fstream>
-#include <iostream>
+
 #include "catch.hpp"
-#include <dirent.h>
-#include <filesystem>
 #include <string>
-#include <vector>
-#include "DSAVLTree.h"
 #include "Handler.h"
-#include "DSHashTable.h"
 
 using namespace std;
 

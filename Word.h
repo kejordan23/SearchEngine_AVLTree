@@ -5,8 +5,6 @@
 #ifndef FINALPROJECT_WORD_H
 #define FINALPROJECT_WORD_H
 
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <cstdlib>
 #include <vector>

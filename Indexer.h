@@ -5,8 +5,7 @@
 #ifndef FINALPROJECT_INDEXER_H
 #define FINALPROJECT_INDEXER_H
 
-#include <fstream>
-#include <iostream>
+
 #include <string>
 #include <cstdlib>
 #include "DSAVLTree.h"

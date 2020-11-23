@@ -5,8 +5,6 @@
 #ifndef FINALPROJECT_WORDINDEX_H
 #define FINALPROJECT_WORDINDEX_H
 
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <cstdlib>
 #include <set>

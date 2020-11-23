@@ -5,8 +5,6 @@
 #ifndef FINALPROJECT_DSHASHTABLE_H
 #define FINALPROJECT_DSHASHTABLE_H
 
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <cmath>
 
@@ -89,13 +87,12 @@ void DSHashTable<K, V>::insert(K& key, V& val){
 }
 template <typename K, typename V>
 V& DSHashTable<K, V>::find(K& key){
-    V val;
-    if(isEmpty()){
-        setFound(false);
-        return val;
-    }
     int hashVal = Hash(key);
     HTEntry<K, V> *entry = t[hashVal];
+    if(isEmpty()){
+        setFound(false);
+        return entry->getVal();
+    }
     while(entry != nullptr){
         if(entry->getKey() == key) {
             setFound(true);
@@ -104,7 +101,7 @@ V& DSHashTable<K, V>::find(K& key){
         entry = entry->getNext();
     }
     setFound(false);
-    return val;
+    return entry->getVal();
 }
 template <typename K, typename V>
 void DSHashTable<K, V>::remove(K&){
