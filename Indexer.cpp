@@ -10,6 +10,7 @@
 #include <cctype>
 #include <cstring>
 #include <filesystem>
+#include <algorithm>
 #include <sstream>
 #include "Word.h"
 #include "WordIndex.h"
