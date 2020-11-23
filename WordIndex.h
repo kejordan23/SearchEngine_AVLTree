@@ -18,13 +18,13 @@ class WordIndex{
         DSAVLTree<Word> words;
     public:
         WordIndex(){};
-        void addWord(Word w){
+        void addWord(Word& w){
             words.insert(w);
         };
         Word& find(Word& t){ return words.find(t);};
         bool isFound(){ return words.isFound();};
         void setFound(bool r){words.setFound(r);};
-        void findDocs(Word word){
+        void findDocs(Word& word){
             word.printDocs();
         };
         void print(){
