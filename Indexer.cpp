@@ -31,6 +31,7 @@ using namespace rapidjson;
 string p = "cs2341_data";
 clock_t time_req;
 
+/*
 int Indexer::getDir_FileSystemDemo(string& str){
     vector<fs::path> files;
     for (const auto & entry : fs::directory_iterator(str))
@@ -76,6 +77,11 @@ int Indexer::getDir_FileSystemDemo(string& str){
     }
     //words.print();
     return 0;
+}*/
+
+Indexer::Indexer(Indexer& i){
+    this->words = i.words;
+    this->names = i.names;
 }
 
 int Indexer::getDir_FileSystem(){
@@ -85,7 +91,7 @@ int Indexer::getDir_FileSystem(){
 
 
     Document d;
-    for(int i = 0; i<1000; i++) {
+    for(int i = 0; i<5; i++) {
         docNum = i;
         ifstream fp(files[i]);
         IStreamWrapper isw(fp);
@@ -100,13 +106,26 @@ int Indexer::getDir_FileSystem(){
                       << "Offset : " << d.GetErrorOffset() << '\n';
             return EXIT_FAILURE;
         }
+        //id
         Value &id = d["paper_id"];
         string iD = id.GetString();
+        //title
         string type = "title";
         Value &s = d["metadata"];
         Value &t = s["title"];
         string z = t.GetString();
         addToIndex(true, z, iD, type);
+        //authors
+        Value &c = s["authors"];
+        type = "authors";
+        string first;
+        string middle;
+        string last;
+        for (SizeType i = 0; i < c.Size(); i++) {
+            last = c[i]["last"].GetString();
+            addToIndex(false, last, iD, type);
+        }
+        //abstract
         Value &l = d["abstract"];
         type = "abstract";
         string p;
@@ -114,6 +133,7 @@ int Indexer::getDir_FileSystem(){
             p = l[i]["text"].GetString();
             addToIndex(true, p, iD, type);
         }
+        //body text
         Value &g = d["body_text"];
         type = "body_text";
         for (SizeType i = 0; i < g.Size(); i++) {
@@ -121,7 +141,7 @@ int Indexer::getDir_FileSystem(){
             addToIndex(true, p, iD, type);
         }
     }
-    //words.print();
+    //names.print();
     return 0;
 }
 bool Indexer::isStpWord(string& word){
@@ -181,13 +201,29 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
             }
         }
     }
-    //add algo to add authors
+    else{
+        if(passage.size() > 2){
+            stemm(passage);
+            vector<string>& temp = names.find(passage);
+            if(names.isFound() && docNum != 0){
+                temp.push_back(id);
+                names.addAuth(passage, temp);
+            }
+            else{
+                vector<string> t;
+                t.push_back(id);
+                names.addAuth(passage, t);
+            }
+        }
+    }
 }
-//AuthIndex getAuthIndex();
+AuthIndex& Indexer::getAuthIndex() {
+    return names;
+}
 WordIndex& Indexer::getWordIndex(){
     return words;
 }
-void Indexer::getDocs(string& word){
+vector<string>& Indexer::getWordDocs(string& word){
     char *test = new char[word.length() + 1];
     strcpy(test, word.c_str());
     int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
@@ -195,10 +231,28 @@ void Indexer::getDocs(string& word){
     word = test;
     Word temp(word);
     Word t = words.find(temp);
-    if(words.isFound())
-        words.findDocs(t);
-    else
-        cout<<"word not found"<<endl;
+    if(words.isFound()) {
+        temp1 = words.findDocs(t);
+        return temp1;
+    }
+    else {
+        cout << "word not found" << endl;
+        return temp1;
+    }
+}
+vector<string>& Indexer::getAuthDocs(string& name){
+    char *test = new char[name.length() + 1];
+    strcpy(test, name.c_str());
+    int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
+    test[end + 1] = 0;
+    name = test;
+    temp2 = names.find(name);
+    if(names.isFound())
+        return temp2;
+    else {
+        cout << "author not found" << endl;
+        return temp2;
+    }
 }
 void Indexer::print(){
 

@@ -18,7 +18,7 @@ class HTEntry{
         K key;
         V val;
         HTEntry* next;
-        HTEntry(K& k, V& v): key(k), val(v), next(nullptr){};
+        HTEntry(K& k = K(), V& v = V()): key(k), val(v), next(nullptr){};
         HTEntry*& getNext(){return next;};
         K& getKey(){return key;};
         V& getVal(){return val;};
@@ -89,7 +89,7 @@ template <typename K, typename V>
 V& DSHashTable<K, V>::find(K& key){
     int hashVal = Hash(key);
     HTEntry<K, V> *entry = t[hashVal];
-    if(isEmpty()){
+    if(entry == nullptr){
         setFound(false);
         return entry->getVal();
     }
@@ -122,7 +122,8 @@ void DSHashTable<K, V>::print(){
         temp = t[i];
         if(temp != nullptr){
             cout<<temp->getKey()<<", ";
-            cout<<temp->getVal()<<endl;
+            for(int j = 0; j<temp->getVal().size(); j++)
+                cout<<temp->getVal()[j]<<endl;
         }
     }
 }

@@ -31,6 +31,7 @@ class DSAVLTree{
         DSAVLTree(){ root = nullptr;};
         DSAVLTree(DSAVLTree<T>&);
         ~DSAVLTree(){ clear(root);};
+        void copy(AVLNode<T>*&, AVLNode<T>*&);
         void clear(AVLNode<T>*& t){
             if(t == nullptr)
                 return;
@@ -62,8 +63,16 @@ class DSAVLTree{
 };
 
 template <typename T>
-DSAVLTree<T>::DSAVLTree(DSAVLTree<T>&){
-
+DSAVLTree<T>::DSAVLTree(DSAVLTree<T>& rhs){
+    copy(rhs.root, this->root);
+}
+template <typename T>
+void DSAVLTree<T>::copy(AVLNode<T>*& first, AVLNode<T>*& second){
+    if(first != nullptr){
+        copy(first->left, second);
+        copy(first->right, second);
+        insert(first->data, second);
+    }
 }
 template <typename T>
 void DSAVLTree<T>::insert(T& val, AVLNode<T>*& t){

@@ -18,6 +18,7 @@ class Word{
         vector<string> docIDs;
         vector<string> locations;
         set<string> docsOnly;
+        vector<string> final;
     public:
         Word(string& w): word(w){};
         string& getWord(){ return word;};
@@ -42,6 +43,14 @@ class Word{
         };
         vector<string>& getIDs(){ return docIDs;};
         vector<string>& getLocs(){ return locations;};
+        vector<string>& getDocs(){
+            auto z = docsOnly.begin();
+            while(z != docsOnly.end()){
+                final.push_back(*z);
+                z++;
+            }
+            return final;
+        };
         void printDocs(){
             auto z = docsOnly.begin();
             while(z != docsOnly.end()){

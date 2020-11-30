@@ -6,16 +6,17 @@
 #include "catch.hpp"
 #include <string>
 #include "Handler.h"
+#include "Query.h"
 
 using namespace std;
 
 //main() takes command line arguments argv 1: input01.txt, argv 2: input02.txt, and argv 3: output.txt
 int main(int argc, char* argv[]) {
-    //conditional to run CATCH tests if there are no command line arguments
-    if (argc == 1) {
+    //conditional to run CATCH tests if there is one command line arguments
+    if (argc != 1) {
         return Catch::Session().run();
-    }
-    else {
+    }   //conditional to run code if there are no command line arguments
+    else if (argc == 1) {
         /*ifstream input1;
         ifstream input2;
         input1.open(argv[1]);
@@ -45,10 +46,9 @@ int main(int argc, char* argv[]) {
         a.insert(l);
 
         a.print();*/
-        string word = argv[1];
-        string path = argv[2];
-        Handler(word, path);
-        //out<<word<<path<<endl;
+        Handler *h;
+        Query q;
+        q.startQueryUI();
 
     }
     return 0;

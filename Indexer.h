@@ -8,6 +8,7 @@
 
 #include <string>
 #include <cstdlib>
+#include <vector>
 #include "DSAVLTree.h"
 #include "Word.h"
 #include "WordIndex.h"
@@ -26,20 +27,24 @@ using namespace rapidjson;
 class Indexer{
     private:
         WordIndex words;
-        //AuthIndex authors;
+        AuthIndex names;
+        vector<string> temp1;
+        vector<string> temp2;
         DSHashTable<string, string> stemTable = DSHashTable<string, string>();
         int docNum;
     public:
     Indexer(){};
+    Indexer(Indexer&);
     int getDir_FileSystem();
-    int getDir_FileSystemDemo(string&);
+    //int getDir_FileSystemDemo(string&);
     bool isStpWord(string&);
     void stemm(string&);
     void remPunc(string&);
     void addToIndex(bool, string&, string&, string&);
-    //AuthIndex getAuthIndex();
+    AuthIndex& getAuthIndex();
     WordIndex& getWordIndex();
-    void getDocs(string&);
+    vector<string>& getWordDocs(string&);
+    vector<string>& getAuthDocs(string&);
     void print();
 };
 
