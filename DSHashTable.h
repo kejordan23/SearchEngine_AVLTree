@@ -31,6 +31,7 @@ class DSHashTable{
     private:
         HTEntry<K, V> **t;
         bool found;
+        V objFound;
         int numEntries;
     public:
         DSHashTable(){
@@ -44,7 +45,8 @@ class DSHashTable{
         bool isEmpty() { return (numEntries == 0);};
         int Hash(K& data);
         void insert(K&, V&);
-        V& find(K&);
+        bool find(K&);
+        V& getFind(){ return objFound;};
         void setFound(bool check){found = check;};
         bool isFound(){ return found;};
         void remove(K&);
@@ -86,22 +88,25 @@ void DSHashTable<K, V>::insert(K& key, V& val){
         entry->setVal(val);
 }
 template <typename K, typename V>
-V& DSHashTable<K, V>::find(K& key){
+bool DSHashTable<K, V>::find(K& key){
     int hashVal = Hash(key);
     HTEntry<K, V> *entry = t[hashVal];
     if(entry == nullptr){
         setFound(false);
-        return entry->getVal();
+        //objFound = entry->getVal();
+        return false;
     }
     while(entry != nullptr){
         if(entry->getKey() == key) {
             setFound(true);
-            return entry->getVal();
+            objFound = entry->getVal();
+            return true;
         }
         entry = entry->getNext();
     }
     setFound(false);
-    return entry->getVal();
+    //objFound = entry->getVal();
+    return false;
 }
 template <typename K, typename V>
 void DSHashTable<K, V>::remove(K&){

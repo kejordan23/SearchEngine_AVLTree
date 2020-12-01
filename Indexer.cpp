@@ -16,6 +16,7 @@
 #include "WordIndex.h"
 #include "AuthIndex.h"
 #include "Indexer.h"
+#include "AuthIDs.h"
 #include "include/rapidjson/rapidjson.h"
 #include "include/rapidjson/document.h"
 #include "include/rapidjson/writer.h"
@@ -154,8 +155,9 @@ bool Indexer::isStpWord(string& word){
     return false;
 }
 void Indexer::stemm(string& word){
-    string& val = stemTable.find(word);
-    if(stemTable.isFound()){
+    //string& val = stemTable.find(word);
+    if(stemTable.find(word)){
+        string& val = stemTable.getFind();
         word = val;
         stemTable.setFound(false);
     }
@@ -185,10 +187,10 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
                 if (!isStpWord(word)) {
                     stemm(word);
                     Word t(word);
-                    Word& temp = words.find(t);
+                    Word& temp5 = words.find(t);
                     if(words.isFound() && docNum != 0){
-                        temp.addID(id);
-                        temp.addLoc(loc);
+                        temp5.addID(id);
+                        temp5.addLoc(loc);
                         words.setFound(false);
                     }
                     else {
@@ -204,13 +206,13 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
     else{
         if(passage.size() > 2){
             stemm(passage);
-            vector<string>& temp = names.find(passage);
-            if(names.isFound() && docNum != 0){
-                temp.push_back(id);
-                names.addAuth(passage, temp);
+            if(names.find(passage) && docNum != 0){
+                AuthIDs& temp6 = names.getFind();
+                temp6.push_back(id);
+                names.addAuth(passage, temp6);
             }
             else{
-                vector<string> t;
+                AuthIDs t;
                 t.push_back(id);
                 names.addAuth(passage, t);
             }
@@ -231,6 +233,7 @@ vector<string>& Indexer::getWordDocs(string& word){
     word = test;
     Word temp(word);
     Word t = words.find(temp);
+    temp1.clear();
     if(words.isFound()) {
         temp1 = words.findDocs(t);
         return temp1;
@@ -246,12 +249,14 @@ vector<string>& Indexer::getAuthDocs(string& name){
     int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
     test[end + 1] = 0;
     name = test;
-    temp2 = names.find(name);
-    if(names.isFound())
-        return temp2;
+    //temp2 = names.find(name);
+    if(names.find(name)) {
+        temp2 = names.getFind();
+        return temp2.getAuthIDs();
+    }
     else {
         cout << "author not found" << endl;
-        return temp2;
+        return temp2.getAuthIDs();
     }
 }
 void Indexer::print(){

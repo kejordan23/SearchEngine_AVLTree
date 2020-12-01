@@ -10,22 +10,24 @@
 #include <set>
 #include "DSHashTable.h"
 #include "Word.h"
+#include "AuthIDs.h"
 
 using namespace std;
 
 class AuthIndex{
 private:
-    DSHashTable<string, vector<string>> names;
+    DSHashTable<string, AuthIDs> names;
 public:
     AuthIndex(){};
     AuthIndex(AuthIndex& a){this->names = a.names;};
-    void addAuth(string& w, vector<string>& ids){
+    void addAuth(string& w, AuthIDs& ids){
         names.insert(w, ids);
     };
-    vector<string>& find(string& t){ return names.find(t);};
+    bool find(string& t){ return names.find(t);};
+    AuthIDs& getFind(){ return names.getFind();};
     bool isFound(){ return names.isFound();};
     void setFound(bool r){names.setFound(r);};
-    vector<string>& findDocs(string& word){
+    bool findDocs(string& word){
         return names.find(word);
     };
     void print(){

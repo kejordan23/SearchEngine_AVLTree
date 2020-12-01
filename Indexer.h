@@ -14,6 +14,7 @@
 #include "WordIndex.h"
 #include "AuthIndex.h"
 #include "DSHashTable.h"
+#include "AuthIDs.h"
 #include "include/rapidjson/rapidjson.h"
 #include "include/rapidjson/document.h"
 #include "include/rapidjson/writer.h"
@@ -29,7 +30,7 @@ class Indexer{
         WordIndex words;
         AuthIndex names;
         vector<string> temp1;
-        vector<string> temp2;
+        AuthIDs temp2;
         DSHashTable<string, string> stemTable = DSHashTable<string, string>();
         int docNum;
     public:

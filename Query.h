@@ -40,6 +40,7 @@ class Query: public Handler{
                 cout<<"Would you like search again? (y/n) ->";
                 cin>>check;
                 words.clear();
+                cin.ignore();
             }
         };
         void processWrds(string& t){
@@ -71,20 +72,27 @@ class Query: public Handler{
                         z++;
                     }
                 }
+                andBool = false;
             }
             else if(orBool){
-                vector<string>& temp1 = index.getWordDocs(words[0]);
+                vector<string> temp1;
+                temp1 = index.getWordDocs(words[0]);
                 vector<string>& temp2 = index.getWordDocs(words[1]);
-                if(temp1.size() > 0 && temp2.size() > 0) {
+                if(temp1.size() > 0) {
                     auto z = temp1.begin();
-                    auto y = temp2.begin();
-                    while (z != temp1.end() || y != temp2.end()) {
+                    while (z != temp1.end()) {
                         f.insert(*z);
-                        f.insert(*y);
                         z++;
+                    }
+                }
+                if(temp2.size()>0){
+                    auto y = temp2.begin();
+                    while (y != temp2.end()) {
+                        f.insert(*y);
                         y++;
                     }
                 }
+                orBool = false;
             }
             else{
                 vector<string>& temp1 = index.getWordDocs(words[0]);
@@ -104,11 +112,14 @@ class Query: public Handler{
                     auto d = temp4.begin();
                     while (d != temp4.end()) {
                         auto it = f.find(*d);
-                        if (it != f.end())
+                        if (it != f.end()) {
                             final.insert(*d);
+                            cout<<*d<<endl;
+                        }
                         d++;
                     }
                 }
+                authBool = false;
             }
             else if (notBool){
                 vector<string>& temp3 = index.getWordDocs(words[words.size()-1]);
@@ -116,12 +127,24 @@ class Query: public Handler{
                     auto d = f.begin();
                     while (d != f.end()) {
                         auto it = find(temp3.begin(), temp3.end(), *d);
-                        if (it == temp3.end())
+                        if (it == temp3.end()) {
                             final.insert(*d);
+                            cout<<*d<<endl;
+                        }
                         d++;
                     }
                 }
+                notBool = false;
             }
+            else{
+                auto z = f.begin();
+                while (z != f.end()) {
+                    cout<<*z<<endl;
+                    z++;
+                }
+            }
+            f.clear();
+            final.clear();
         };
 };
 
