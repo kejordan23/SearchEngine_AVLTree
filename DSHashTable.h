@@ -54,8 +54,18 @@ class DSHashTable{
         void print();
 };
 template <typename K, typename V>
-DSHashTable<K, V>::DSHashTable(DSHashTable&){
-
+DSHashTable<K, V>::DSHashTable(DSHashTable<K, V>& other){
+    t = new HTEntry<K, V> * [TABLE_SIZE];
+    HTEntry<K, V>* first;
+    for(int i = 0; i<TABLE_SIZE; i++){
+        first = other.t[i];
+        if (first != nullptr)
+            break;
+    }
+    while(first){
+        insert(first->key, first->val);
+        first = other.first->getNext();
+    }
 }
 template <typename K, typename V>
 int DSHashTable<K, V>::Hash(K& data){        //https://stackoverflow.com/questions/8317508/hash-function-for-a-string
@@ -68,7 +78,7 @@ int DSHashTable<K, V>::Hash(K& data){        //https://stackoverflow.com/questio
     return hash % TABLE_SIZE;
 }
 template <typename K, typename V>
-void DSHashTable<K, V>::insert(K& key, V& val){
+void DSHashTable<K, V>::insert(K& key, V& val){ //adapted from https://aozturk.medium.com/simple-hash-map-hash-table-implementation-in-c-931965904250
     int hashVal = Hash(key);
     HTEntry<K, V> *prev = nullptr;
     HTEntry<K, V> *entry = t[hashVal];
@@ -93,7 +103,6 @@ bool DSHashTable<K, V>::find(K& key){
     HTEntry<K, V> *entry = t[hashVal];
     if(entry == nullptr){
         setFound(false);
-        //objFound = entry->getVal();
         return false;
     }
     while(entry != nullptr){
@@ -105,12 +114,26 @@ bool DSHashTable<K, V>::find(K& key){
         entry = entry->getNext();
     }
     setFound(false);
-    //objFound = entry->getVal();
     return false;
 }
 template <typename K, typename V>
-void DSHashTable<K, V>::remove(K&){
-
+void DSHashTable<K, V>::remove(K& key){ //adapted from https://aozturk.medium.com/simple-hash-map-hash-table-implementation-in-c-931965904250
+    int hashVal = Hash(key);
+    HTEntry<K, V> *prev = nullptr;
+    HTEntry<K, V> *entry = t[hashVal];
+    while(entry != nullptr && entry->key != key){
+        prev = entry;
+        entry = entry->getNext();
+    }
+    if(entry == nullptr)
+        return;
+    else{
+        if(prev == nullptr)
+            t[hashVal] = entry->getNext();
+        else
+            prev->setNext(entry->getNext());
+        delete entry;
+    }
 }
 template <typename K, typename V>
 void DSHashTable<K, V>::clear(){

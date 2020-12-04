@@ -142,7 +142,7 @@ int Indexer::getDir_FileSystem(){
             addToIndex(true, p, iD, type);
         }
     }
-    //names.print();
+    //words.print();
     return 0;
 }
 bool Indexer::isStpWord(string& word){

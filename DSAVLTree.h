@@ -27,6 +27,7 @@ class DSAVLTree{
         bool found;
         void insert(T&, AVLNode<T>*&);
         T& find(T&, AVLNode<T>*&);
+        void remove(T&, AVLNode<T>*&);
     public:
         DSAVLTree(){ root = nullptr;};
         DSAVLTree(DSAVLTree<T>&);
@@ -54,7 +55,7 @@ class DSAVLTree{
         };
         bool isFound(){return found;};
         void setFound(bool check){found = check;};
-        void remove(T&);
+        void remove(T& data){ remove(data, root);};
         bool isEmpty(){
             return (root==nullptr);
         };
@@ -143,8 +144,15 @@ T& DSAVLTree<T>::find(T& data, AVLNode<T>*& t){
     }
 }
 template <typename T>
-void DSAVLTree<T>::remove(T&){
-
+void DSAVLTree<T>::remove(T& data, AVLNode<T>*& t){
+    if (t == nullptr)
+        clear();
+    else if(data< t->data)
+        remove(data, t->left);
+    else if(data> t->data)
+        remove(data, t->right);
+    else
+        delete t;
 }
 template <typename T>
 void DSAVLTree<T>::print(){

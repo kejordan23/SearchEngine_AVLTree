@@ -61,7 +61,8 @@ class Query: public Handler{
             }
             set<string> f;
             if(andBool){
-                vector<string>& temp1 = index.getWordDocs(words[0]);
+                vector<string> temp1;
+                temp1 = index.getWordDocs(words[0]);
                 vector<string>& temp2 = index.getWordDocs(words[1]);
                 if(temp1.size() > 0 && temp2.size() > 0) {
                     auto z = temp1.begin();
