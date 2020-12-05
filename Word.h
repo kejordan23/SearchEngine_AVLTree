@@ -17,6 +17,7 @@ class Word{
         string word;
         int count;
         vector<int> wordFreq;
+        vector<string> top15;
         vector<string> docIDs;
         vector<string> locations;
         unordered_set<string> docsOnly;
@@ -52,25 +53,54 @@ class Word{
                 final.push_back(*z);
                 z++;
             }
-            for(int i = 0; i<wordFreq.size(); i++){
+            /*for(int i = 0; i<wordFreq.size(); i++){
                 cout<<wordFreq[i]<<endl;
-            }
-            return final;
+            }*/
+            return top15;
         };
         void popWordFreq(){
             int count = 1;
             for(int i = 1; i<=docIDs.size(); i++){
                 if(docIDs[i] != docIDs[i-1]){
-                    wordFreq.push_back(count);
+                    wordFreq.insert(wordFreq.end(), count);
                     count = 1;
                 }
                 else
                     count++;
             }
+            vector<string> temp3;
+            auto z = docsOnly.begin();
+            while(z != docsOnly.end()){
+                temp3.push_back(*z);
+                z++;
+            }
+            int temp = 0;
+            int temp2 = 1000000;
+            int index = 0;
+            int index2 = 0;
+            int size = 15;
+            if(docsOnly.size()<15)
+                size = docsOnly.size();
+            for(int j = 0; j<size; j++) {
+                for (int i = 0; i < wordFreq.size(); i++) {
+                    if (wordFreq[i] > temp && wordFreq[i] <temp2) {
+                        temp = wordFreq[i];
+                        index = i;
+                    }
+                    else if(wordFreq[i] == temp2 && i != index2){
+                        top15.push_back(temp3[i]);
+                    }
+                }
+                temp2 = temp;
+                index2 = index;
+                temp = 0;
+                top15.push_back(temp3[index]);
+            }
         };
         void printDocs(){
             popWordFreq();
             auto z = docsOnly.begin();
+            cout<<"docsOnly:"<<endl;
             while(z != docsOnly.end()){
                 cout<<*z<<endl;
                 z++;

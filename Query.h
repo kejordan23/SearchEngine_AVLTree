@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <unordered_set>
 #include "Handler.h"
 
 using namespace std;
@@ -59,7 +60,7 @@ class Query: public Handler{
                 else
                     words.push_back(word);
             }
-            set<string> f;
+            unordered_set<string> f;
             if(andBool){
                 vector<string> temp1;
                 temp1 = index.getWordDocs(words[0]);
@@ -106,7 +107,7 @@ class Query: public Handler{
                     }
                 }
             }
-            set<string> final;
+            unordered_set<string> final;//remember this is backwards
             if(authBool){
                 vector<string>& temp4 = index.getAuthDocs(words[words.size()-1]);
                 if(temp4.size() > 0) {
