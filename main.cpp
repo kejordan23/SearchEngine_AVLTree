@@ -13,31 +13,41 @@
 // print statistics on the index when prompted. Stats include: number of articles indexed, average number
 // of indexed words per article, total number of words in index, and total number of unique authors.
 //
+#define CATCH_CONFIG_RUNNER
+
+#include "catch.hpp"
+#include <string>
 #include "Handler.h"
 #include "Query.h"
 
 using namespace std;
 
-//main()
+//main() takes command line arguments argv 1: input01.txt, argv 2: input02.txt, and argv 3: output.txt
 int main(int argc, char* argv[]) {
-    Handler *h;
-    Query q;
-    q.makeIndex();      //populates the index with 12,000 articles
-    char endProg = 'y';
-    int option;
-    while (endProg != 'n' && endProg != 'N') {  //loop to keep program running until user termination
-        cout << "User options: " << endl;
-        cout << "     1. Enter search query" << endl;
-        cout << "     2. Print index stats" << endl;
-        cout << "Please enter the option number here ->";
-        cin >> option;
-        if (option == 1) {
-            q.startQueryUI();           //query for search terms
-        } else if (option == 2) {
-            q.printStats();             //index statistics
+    //conditional to run CATCH tests if there is one command line arguments
+    if (argc != 1) {
+        return Catch::Session().run();
+    }   //conditional to run code if there are no command line arguments
+    else if (argc == 1) {
+        Handler *h;
+        Query q;
+        q.makeIndex();      //populates the index with 12,000 articles
+        char endProg = 'y';
+        int option;
+        while (endProg != 'n' && endProg != 'N') {  //loop to keep program running until user termination
+            cout << "User options: " << endl;
+            cout << "     1. Enter search query" << endl;
+            cout << "     2. Print index stats" << endl;
+            cout << "Please enter the option number here ->";
+            cin >> option;
+            if (option == 1) {
+                q.startQueryUI();           //query for search terms
+            } else if (option == 2) {
+                q.printStats();             //index statistics
+            }
+            cout << "Do you wish to choose another option? (y/n) ->";
+            cin >> endProg;
         }
-        cout<<"Do you wish to choose another option? (y/n) ->";
-        cin>>endProg;
     }
     return 0;
 }

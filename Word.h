@@ -87,7 +87,7 @@ class Word{
             bool inserted = false;
             if(docsOnly.size()<15)
                 size = docsOnly.size();
-            for(int j = 0; j<size && top15.size() <size; j++) {     //populates top15
+            for(int j = 0; j<size && top15.size() <size; j++) {
                 for (int i = 0; i < wordFreq.size(); i++) {
                     if (wordFreq[i] > temp && wordFreq[i] <temp2) {
                         temp = wordFreq[i];
@@ -106,6 +106,13 @@ class Word{
                 inserted = false;
             }
         };
+    void print(){
+        popWordFreq();
+        cout<<word<<endl;
+        for(int i = 0; i<wordFreq.size(); i++){
+            cout<<wordFreq[i]<<endl;
+        }
+    };
 };
 
 #endif //FINALPROJECT_WORD_H
