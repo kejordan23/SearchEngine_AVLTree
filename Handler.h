@@ -15,7 +15,7 @@ class Handler{
     public:
         Indexer index;
         Handler(){
-            makeIndex();
+            //makeIndex();
         };
         /*Handler(string& word, string& path){
             makeIndexDemo(path);

@@ -22,6 +22,7 @@ class Word{
         vector<string> locations;
         unordered_set<string> docsOnly;
         vector<string> final;
+        vector<string> andFinal;
     public:
         Word(string& w): word(w), count(1){};
         string& getWord(){ return word;};
@@ -57,6 +58,16 @@ class Word{
                 cout<<wordFreq[i]<<endl;
             }*/
             return top15;
+        };
+        vector<string>& getMatches(vector<string>& top){
+            auto z = top.begin();
+            while(z != top.end() && andFinal.size()<= 15){
+                auto it = docsOnly.find(*z);
+                if(it != docsOnly.end())
+                    andFinal.push_back(*z);
+                z++;
+            }
+            return andFinal;
         };
         void popWordFreq(){
             int count = 1;

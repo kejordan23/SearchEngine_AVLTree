@@ -44,6 +44,7 @@ class Indexer{
     void addToIndex(bool, string&, string&, string&);
     AuthIndex& getAuthIndex();
     WordIndex& getWordIndex();
+    vector<string>& getMatches(vector<string>&, string& word);
     vector<string>& getWordDocs(string&);
     vector<string>& getAuthDocs(string&);
     void print();

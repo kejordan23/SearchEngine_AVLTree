@@ -69,14 +69,10 @@ class Query: public Handler{
             if(andBool){
                 vector<string> temp1;
                 temp1 = index.getWordDocs(words[0]);
-                vector<string>& temp2 = index.getWordDocs(words[1]);
+                vector<string>& temp2 = index.getMatches(temp1, words[1]);
                 if(temp1.size() > 0 && temp2.size() > 0) {
-                    auto z = temp1.begin();
-                    while (z != temp1.end()) {
-                        auto it = find(temp2.begin(), temp2.end(), *z);
-                        if (it != temp2.end())
-                            f.push_back(*z);
-                        z++;
+                    for(int i = 0; i<temp2.size(); i++){
+                        f.push_back(temp2[i]);
                     }
                 }
                 andBool = false;
@@ -85,14 +81,14 @@ class Query: public Handler{
                 vector<string> temp1;
                 temp1 = index.getWordDocs(words[0]);
                 vector<string>& temp2 = index.getWordDocs(words[1]);
-                if(temp1.size() > 0) {
+                if(temp1.size() > 0 && temp2.size() ==0) {
                     auto z = temp1.begin();
                     while (z != temp1.end()) {
                         f.push_back(*z);
                         z++;
                     }
                 }
-                if(temp2.size()>0){
+                else if(temp2.size()>0 && temp1.size() ==0){
                     auto y = temp2.begin();
                     while (y != temp2.end()) {
                         auto it = find(temp1.begin(), temp1.end(), *y);
@@ -100,6 +96,13 @@ class Query: public Handler{
                             f.push_back(*y);
                         y++;
                     }
+                }
+                else {
+                    for (int i = 0; i<7; i++){
+                        f.push_back(temp1[i]);
+                        f.push_back(temp2[i]);
+                    }
+                    f.push_back(temp1[7]);
                 }
                 orBool = false;
             }
@@ -147,7 +150,10 @@ class Query: public Handler{
             }
             else{
                 final = f;
-                printDocs(final);
+                if(final.size() == 0)
+                    cout<<"No documents include both search terms"<<endl;
+                else
+                    printDocs(final);
             }
             char sum = ' ';
             int num;

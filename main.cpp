@@ -31,6 +31,8 @@ int main(int argc, char* argv[]) {
         if (!input.is_open())
             cout << "unable to open file" << endl;*/
         Handler *h;
+        Query q;
+        q.makeIndex();
         char endProg;
         int option;
         while (endProg != 'n' && endProg != 'N') {
@@ -40,7 +42,6 @@ int main(int argc, char* argv[]) {
             cout << "Please enter the option number here ->";
             cin >> option;
             if (option == 1) {
-                Query q;
                 q.startQueryUI();
             } else if (option == 2) {
                 //make stats function

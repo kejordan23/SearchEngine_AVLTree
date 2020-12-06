@@ -92,55 +92,59 @@ int Indexer::getDir_FileSystem(){
 
 
     Document d;
-    for(int i = 0; i<5; i++) {
+    for(int i = 0; i<files.size(); i++) {
         docNum = i;
         ifstream fp(files[i]);
         IStreamWrapper isw(fp);
-        d.ParseStream(isw);
+            d.ParseStream(isw);
 
-        StringBuffer buffer;
-        Writer<StringBuffer> writer(buffer);
-        d.Accept(writer);
+            StringBuffer buffer;
+            Writer<StringBuffer> writer(buffer);
+            d.Accept(writer);
 
-        if (d.HasParseError()) {
-            std::cout << "Error  : " << d.GetParseError() << '\n'
-                      << "Offset : " << d.GetErrorOffset() << '\n';
-            return EXIT_FAILURE;
-        }
-        //id
-        Value &id = d["paper_id"];
-        string iD = id.GetString();
-        //title
-        string type = "title";
-        Value &s = d["metadata"];
-        Value &t = s["title"];
-        string z = t.GetString();
-        addToIndex(true, z, iD, type);
-        //authors
-        Value &c = s["authors"];
-        type = "authors";
-        string first;
-        string middle;
-        string last;
-        for (SizeType i = 0; i < c.Size(); i++) {
-            last = c[i]["last"].GetString();
-            addToIndex(false, last, iD, type);
-        }
-        //abstract
-        Value &l = d["abstract"];
-        type = "abstract";
-        string p;
-        for (SizeType i = 0; i < l.Size(); i++) {
-            p = l[i]["text"].GetString();
-            addToIndex(true, p, iD, type);
-        }
-        //body text
-        Value &g = d["body_text"];
-        type = "body_text";
-        for (SizeType i = 0; i < g.Size(); i++) {
-            p = g[i]["text"].GetString();
-            addToIndex(true, p, iD, type);
-        }
+            /*if (d.HasParseError()) {
+                std::cout << "Error  : " << d.GetParseError() << '\n'
+                          << "Offset : " << d.GetErrorOffset() << '\n';
+                return EXIT_FAILURE;
+            }*/
+            if (!d.HasParseError()) {
+                //id
+                Value &id = d["paper_id"];
+                string iD = id.GetString();
+                //title
+                string type = "title";
+                Value &s = d["metadata"];
+                Value &t = s["title"];
+                string z = t.GetString();
+                if (z != "") {
+                    addToIndex(true, z, iD, type);
+                    //authors
+                    Value &c = s["authors"];
+                    type = "authors";
+                    string first;
+                    string middle;
+                    string last;
+                    for (SizeType i = 0; i < c.Size(); i++) {
+                        last = c[i]["last"].GetString();
+                        addToIndex(false, last, iD, type);
+                    }
+                    //abstract
+                    Value &l = d["abstract"];
+                    type = "abstract";
+                    string p;
+                    for (SizeType i = 0; i < l.Size(); i++) {
+                        p = l[i]["text"].GetString();
+                        addToIndex(true, p, iD, type);
+                    }
+                    //body text
+                    Value &g = d["body_text"];
+                    type = "body_text";
+                    for (SizeType i = 0; i < g.Size(); i++) {
+                        p = g[i]["text"].GetString();
+                        addToIndex(true, p, iD, type);
+                    }
+                }
+            }
     }
     //words.print();
     return 0;
@@ -224,6 +228,24 @@ AuthIndex& Indexer::getAuthIndex() {
 }
 WordIndex& Indexer::getWordIndex(){
     return words;
+}
+vector<string>& Indexer::getMatches(vector<string>& top15, string& word){
+    char *test = new char[word.length() + 1];
+    strcpy(test, word.c_str());
+    int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
+    test[end + 1] = 0;
+    word = test;
+    Word temp(word);
+    Word t = words.find(temp);
+    temp1.clear();
+    if(words.isFound()) {
+        temp1 = words.getMatches(top15, t);
+        return temp1;
+    }
+    else {
+        cout << "word not found" << endl;
+        return temp1;
+    }
 }
 vector<string>& Indexer::getWordDocs(string& word){
     char *test = new char[word.length() + 1];

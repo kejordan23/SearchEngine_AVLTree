@@ -28,6 +28,9 @@ class WordIndex{
         vector<string>& findDocs(Word& word){
             return word.getDocs();
         };
+        vector<string>& getMatches(vector<string>& top15, Word& word2){
+            return word2.getMatches(top15);
+        };
         void print(){
             words.print();
         };
