@@ -1,10 +1,12 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// Indexer.h
 //
+// This header file declares the Indexer constructor and any functions found in the Indexer class
 
 #ifndef FINALPROJECT_INDEXER_H
 #define FINALPROJECT_INDEXER_H
-
 
 #include <string>
 #include <cstdlib>

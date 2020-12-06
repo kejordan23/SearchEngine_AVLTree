@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// Word.h
 //
+// This header file declares and defines the Word constructor and any functions found in the Word class
 
 #ifndef FINALPROJECT_WORD_H
 #define FINALPROJECT_WORD_H
@@ -21,7 +24,6 @@ class Word{
         vector<string> docIDs;
         vector<string> locations;
         unordered_set<string> docsOnly;
-        vector<string> final;
         vector<string> andFinal;
     public:
         Word(string& w): word(w), count(1){};
@@ -49,14 +51,6 @@ class Word{
         vector<string>& getLocs(){ return locations;};
         vector<string>& getDocs(){
             popWordFreq();
-            auto z = docsOnly.begin();
-            while(z != docsOnly.end()){
-                final.push_back(*z);
-                z++;
-            }
-            /*for(int i = 0; i<wordFreq.size(); i++){
-                cout<<wordFreq[i]<<endl;
-            }*/
             return top15;
         };
         vector<string>& getMatches(vector<string>& top){
@@ -70,7 +64,7 @@ class Word{
             return andFinal;
         };
         void popWordFreq(){
-            int count = 1;
+            //counts occurrences of same docID in docIDS and adds to wordFreq list
             for(int i = 1; i<=docIDs.size(); i++){
                 if(docIDs[i] != docIDs[i-1]){
                     wordFreq.insert(wordFreq.end(), count);
@@ -93,7 +87,7 @@ class Word{
             bool inserted = false;
             if(docsOnly.size()<15)
                 size = docsOnly.size();
-            for(int j = 0; j<size && top15.size() <size; j++) {
+            for(int j = 0; j<size && top15.size() <size; j++) {     //populates top15
                 for (int i = 0; i < wordFreq.size(); i++) {
                     if (wordFreq[i] > temp && wordFreq[i] <temp2) {
                         temp = wordFreq[i];
@@ -110,32 +104,6 @@ class Word{
                 if(!inserted)
                     top15.push_back(temp3[index]);
                 inserted = false;
-            }
-        };
-        void printDocs(){
-            popWordFreq();
-            auto z = docsOnly.begin();
-            cout<<"docsOnly:"<<endl;
-            while(z != docsOnly.end()){
-                cout<<*z<<endl;
-                z++;
-            }
-            for(int i = 0; i<wordFreq.size(); i++){
-                cout<<wordFreq[i]<<endl;
-            }
-        };
-        void print(){
-            popWordFreq();
-            cout<<word<<endl;
-            /*auto z = docsOnly.begin();
-            auto y = wordFreq.begin();
-            while(z != docsOnly.end()){
-                cout<<"Found "<<*y<<" times in document "<<*z<<endl;
-                z++;
-                y++;
-            }*/
-            for(int i = 0; i<wordFreq.size(); i++){
-                cout<<wordFreq[i]<<endl;
             }
         };
 };

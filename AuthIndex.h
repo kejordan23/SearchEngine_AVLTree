@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// AuthIndex.h
 //
+// This header file declares and defines the AuthIndex constructor and any functions found in the AuthIndex class
 
 #ifndef FINALPROJECT_AUTHINDEX_H
 #define FINALPROJECT_AUTHINDEX_H

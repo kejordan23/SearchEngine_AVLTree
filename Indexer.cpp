@@ -1,11 +1,13 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// Indexer.cpp
 //
+// This source file defines all the constructors, operators, and functions for the Indexer class
+
 #include <fstream>
-#include <ctime>
 #include <iostream>
 #include <string>
-#include <cstdlib>
 #include <vector>
 #include <cctype>
 #include <cstring>
@@ -13,8 +15,6 @@
 #include <algorithm>
 #include <sstream>
 #include "Word.h"
-#include "WordIndex.h"
-#include "AuthIndex.h"
 #include "Indexer.h"
 #include "AuthIDs.h"
 #include "include/rapidjson/rapidjson.h"
@@ -30,7 +30,6 @@ namespace fs = __fs::filesystem;
 using namespace rapidjson;
 
 string p = "cs2341_data";
-clock_t time_req;
 
 Indexer::Indexer(Indexer& i){
     this->words = i.words;
@@ -45,7 +44,7 @@ int Indexer::getDir_FileSystem(){
     numAuth = 0;
     avgNumWrds = 0;
 
-    Document d;
+    Document d;         //uses RapidJSON for parsing https://github.com/Tencent/rapidjson/
     for(int i = 0; i<files.size(); i++) {
         docNum = i;
         ifstream fp(files[i]);
@@ -56,7 +55,7 @@ int Indexer::getDir_FileSystem(){
         Writer<StringBuffer> writer(buffer);
         d.Accept(writer);
 
-        if (!d.HasParseError()) {
+        if (!d.HasParseError()) {           //checks if doc is empty
             //id
             Value &id = d["paper_id"];
             string iD = id.GetString();
@@ -65,7 +64,7 @@ int Indexer::getDir_FileSystem(){
             Value &s = d["metadata"];
             Value &t = s["title"];
             string z = t.GetString();
-            if (z != "") {
+            if (z != "") {                  //checks if doc has readable title
                 docsParsed++;
                 addToIndex(true, z, iD, type);
                 //authors
@@ -96,9 +95,10 @@ int Indexer::getDir_FileSystem(){
             }
         }
     }
-    avgNumWrds /= docsParsed;
+    avgNumWrds /= docsParsed;           //computes average words per article after stop word removal
     return 0;
 }
+//determines if string arg is a stop word
 bool Indexer::isStpWord(string& word){
     transform(word.begin(), word.end(), word.begin(), ::tolower);
     vector<string> stopWrds = {"we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "not", "only", "own", "same", "so", "than", "too", "very", "can", "will", "just", "should", "now"};
@@ -108,6 +108,7 @@ bool Indexer::isStpWord(string& word){
     }
     return false;
 }
+//uses wooorm's stemmer to stem word if not found in the stem table
 void Indexer::stemm(string& word){
     if(stemTable.find(word)){
         string& val = stemTable.getFind();
@@ -125,15 +126,17 @@ void Indexer::stemm(string& word){
         word = test;
     }
 }
+//removes any punctuation from the end of the word
 void Indexer::remPunc(string& str){
     if(ispunct(str[str.size()-1]))
         str.erase(str.size()-2, str.size()-1);
 }
+//adds a passage to index by separating words, ignoring stop words, and stemming them
 void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
     string word;
     char delim = ' ';
     istringstream temp(passage);
-    if(type) {
+    if(type) {              //boolean check true = add to WordIndex
         while (getline(temp, word, delim)) {
             if(word.size() > 2) {
                 remPunc(word);
@@ -157,7 +160,7 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
             }
         }
     }
-    else{
+    else{               //boolean check false = add to AuthIndex
         if(passage.size() > 2){
             stemm(passage);
             if(names.find(passage) && docNum != 0){
@@ -174,6 +177,7 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
         }
     }
 }
+//function specific to AND to get matches from primary word's top15 and secondary word's docIDs
 vector<string>& Indexer::getMatches(vector<string>& top15, string& word){
     char *test = new char[word.length() + 1];
     strcpy(test, word.c_str());
@@ -192,6 +196,7 @@ vector<string>& Indexer::getMatches(vector<string>& top15, string& word){
         return temp1;
     }
 }
+//function to get top15 ranked docs based on word query
 vector<string>& Indexer::getWordDocs(string& word){
     char *test = new char[word.length() + 1];
     strcpy(test, word.c_str());
@@ -210,13 +215,13 @@ vector<string>& Indexer::getWordDocs(string& word){
         return temp1;
     }
 }
+//function to get all docs for an authors last name
 vector<string>& Indexer::getAuthDocs(string& name){
     char *test = new char[name.length() + 1];
     strcpy(test, name.c_str());
     int end = stem(test, 0, strlen(test) - 1); //https://github.com/wooorm/stmr.c.git
     test[end + 1] = 0;
     name = test;
-    //temp2 = names.find(name);
     if(names.find(name)) {
         temp2 = names.getFind();
         return temp2.getAuthIDs();

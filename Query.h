@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// Query.h
 //
+// This header file declares and defines the Query constructor and any functions found in the Query class
 
 #ifndef FINALPROJECT_QUERY_H
 #define FINALPROJECT_QUERY_H
@@ -35,6 +38,13 @@ class Query: public Handler{
             orBool = false;
             notBool = false;
         };
+        void printStats(){
+            cout<<"Index Statistics: "<<endl;
+            cout<<"     Number of Individual articles indexed: "<<index.getDocsParsed()<<endl;
+            cout<<"     Average Number of Words Indexed Per Article: "<<index.getAvgNumWrds()<<endl;
+            cout<<"     Number of Words in Index: "<<index.getTotWrds()<<endl;
+            cout<<"     Number of Unique Authors: "<<index.getTotAuth()<<endl;
+        };
         void startQueryUI(){
             string temp;
             char check = 'y';
@@ -49,6 +59,7 @@ class Query: public Handler{
                 words.clear();
             }
         };
+        //function processes boolean query and sets boolean flags
         void processWrds(string& t){
             string word;
             char delim = ' ';
@@ -65,6 +76,7 @@ class Query: public Handler{
                 else
                     words.push_back(word);
             }
+            //AND, OR, or nothing
             vector<string> f;
             if(andBool){
                 vector<string> temp1;
@@ -117,7 +129,8 @@ class Query: public Handler{
                     }
                 }
             }
-            vector<string> final;//remember this is backwards
+            //AUTHOR and NOT
+            vector<string> final;
             if(authBool){
                 vector<string>& temp4 = index.getAuthDocs(words[words.size()-1]);
                 if(temp4.size() > 0) {
@@ -155,10 +168,11 @@ class Query: public Handler{
                 else
                     printDocs(final);
             }
+            //asks user if they would like an excerpt from a chosen article
             char sum = ' ';
             int num;
             while (sum!= 'n' && sum != 'N') {
-                cout << "Would you like a summary of an article? (y/n) ->";
+                cout << "Would you like an excerpt from an article? (y/n) ->";
                 cin >> sum;
                 if (sum == 'y' || sum == 'Y') {
                     printDocs(final);
@@ -179,6 +193,7 @@ class Query: public Handler{
             f.clear();
             final.clear();
         };
+        //prints top15 using RapidJSON https://github.com/Tencent/rapidjson/
         void printDocs(vector<string>& final){
             string temp;
             Document d;
@@ -208,6 +223,7 @@ class Query: public Handler{
                 }
             }
         };
+        //prints excerpt using RapidJSON https://github.com/Tencent/rapidjson/
         void printSummary(string& id){
             string temp = "cs2341_data/"+ id+".json";
             Document d;

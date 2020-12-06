@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 12/1/20.
+// AuthIDs.h
 //
+// This header file declares and defines the AuthIDs constructor and any functions found in the AuthIDs class
 
 #ifndef FINALPROJECT_AUTHIDS_H
 #define FINALPROJECT_AUTHIDS_H

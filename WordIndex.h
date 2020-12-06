@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// WordIndex.h
 //
+// This header file declares and defines the WordIndex constructor and any functions found in the WordIndex class
 
 #ifndef FINALPROJECT_WORDINDEX_H
 #define FINALPROJECT_WORDINDEX_H

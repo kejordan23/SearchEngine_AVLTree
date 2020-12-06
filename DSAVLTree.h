@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// DSAVLTree.h
 //
+// This header file declares and defines the DSAVLTree constructor and any functions found in the DSAVLTree class
 
 #ifndef FINALPROJECT_DSAVLTREE_H
 #define FINALPROJECT_DSAVLTREE_H

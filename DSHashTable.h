@@ -1,6 +1,9 @@
+// Final Project: Search Engine
+// Author: Kylie Jordan
 //
-// Created by Kylie Jordan on 11/16/20.
+// DSHashTable.h
 //
+// This header file declares and defines the DSHashTable constructor and any functions found in the DSHashTable class
 
 #ifndef FINALPROJECT_DSHASHTABLE_H
 #define FINALPROJECT_DSHASHTABLE_H
@@ -68,7 +71,7 @@ DSHashTable<K, V>::DSHashTable(DSHashTable<K, V>& other){
     }
 }
 template <typename K, typename V>
-int DSHashTable<K, V>::Hash(K& data){        //https://stackoverflow.com/questions/8317508/hash-function-for-a-string
+int DSHashTable<K, V>::Hash(K& data){        //basic hash function for strings from https://stackoverflow.com/questions/8317508/hash-function-for-a-string
     int seed = 131;
     unsigned long hash = 0;
     for(int i = 0; i < data.length(); i++)
