@@ -14,23 +14,18 @@ using namespace std;
 class Handler{
     public:
         Indexer index;
-        Handler(){
-            //makeIndex();
-        };
-        /*Handler(string& word, string& path){
-            makeIndexDemo(path);
-            getDocs(word);
-        };*/
+        Handler(){};
         void makeIndex(){
             index.getDir_FileSystem();
         };
-        /*void makeIndexDemo(string& str){
-            index.getDir_FileSystemDemo(str);
-        };*/
         virtual void startQueryUI() = 0;
-        /*void getDocs(string& word){
-            index.getDocs(word);
-        };*/
+        void printStats(){
+            cout<<"Index Statistics: "<<endl;
+            cout<<"     Number of Individual articles indexed: "<<index.getDocsParsed()<<endl;
+            cout<<"     Average Number of Words Indexed Per Article: "<<index.getAvgNumWrds()<<endl;
+            cout<<"     Number of Words in Index: "<<index.getTotWrds()<<endl;
+            cout<<"     Number of Unique Authors: "<<index.getTotAuth()<<endl;
+        };
 };
 
 #endif //FINALPROJECT_HANDLER_H

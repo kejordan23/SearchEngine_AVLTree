@@ -32,13 +32,18 @@ using namespace rapidjson;
 string p = "cs2341_data";
 clock_t time_req;
 
-/*
-int Indexer::getDir_FileSystemDemo(string& str){
-    vector<fs::path> files;
-    for (const auto & entry : fs::directory_iterator(str))
-        if(entry.path() != (str+"/.DS_Store"))
-            files.emplace_back(entry.path());
+Indexer::Indexer(Indexer& i){
+    this->words = i.words;
+    this->names = i.names;
+}
 
+int Indexer::getDir_FileSystem(){
+    vector<fs::path> files;
+    for (const auto & entry : fs::directory_iterator(p))
+        files.emplace_back(entry.path());
+    docsParsed = 0;
+    numAuth = 0;
+    avgNumWrds = 0;
 
     Document d;
     for(int i = 0; i<files.size(); i++) {
@@ -51,102 +56,47 @@ int Indexer::getDir_FileSystemDemo(string& str){
         Writer<StringBuffer> writer(buffer);
         d.Accept(writer);
 
-        if (d.HasParseError()) {
-            std::cout << "Error  : " << d.GetParseError() << '\n'
-                      << "Offset : " << d.GetErrorOffset() << '\n';
-            return EXIT_FAILURE;
-        }
-        Value &id = d["paper_id"];
-        string iD = id.GetString();
-        string type = "title";
-        Value &s = d["metadata"];
-        Value &t = s["title"];
-        string z = t.GetString();
-        addToIndex(true, z, iD, type);
-        Value &l = d["abstract"];
-        type = "abstract";
-        for (SizeType i = 0; i < l.Size(); i++) {
-            string p = l[i]["text"].GetString();
-            addToIndex(true, p, iD, type);
-        }
-        Value &g = d["body_text"];
-        type = "body_text";
-        for (SizeType i = 0; i < g.Size(); i++) {
-            string p = g[i]["text"].GetString();
-            addToIndex(true, p, iD, type);
-        }
-    }
-    //words.print();
-    return 0;
-}*/
-
-Indexer::Indexer(Indexer& i){
-    this->words = i.words;
-    this->names = i.names;
-}
-
-int Indexer::getDir_FileSystem(){
-    vector<fs::path> files;
-    for (const auto & entry : fs::directory_iterator(p))
-        files.emplace_back(entry.path());
-
-
-    Document d;
-    for(int i = 0; i<files.size(); i++) {
-        docNum = i;
-        ifstream fp(files[i]);
-        IStreamWrapper isw(fp);
-            d.ParseStream(isw);
-
-            StringBuffer buffer;
-            Writer<StringBuffer> writer(buffer);
-            d.Accept(writer);
-
-            /*if (d.HasParseError()) {
-                std::cout << "Error  : " << d.GetParseError() << '\n'
-                          << "Offset : " << d.GetErrorOffset() << '\n';
-                return EXIT_FAILURE;
-            }*/
-            if (!d.HasParseError()) {
-                //id
-                Value &id = d["paper_id"];
-                string iD = id.GetString();
-                //title
-                string type = "title";
-                Value &s = d["metadata"];
-                Value &t = s["title"];
-                string z = t.GetString();
-                if (z != "") {
-                    addToIndex(true, z, iD, type);
-                    //authors
-                    Value &c = s["authors"];
-                    type = "authors";
-                    string first;
-                    string middle;
-                    string last;
-                    for (SizeType i = 0; i < c.Size(); i++) {
-                        last = c[i]["last"].GetString();
-                        addToIndex(false, last, iD, type);
-                    }
-                    //abstract
-                    Value &l = d["abstract"];
-                    type = "abstract";
-                    string p;
-                    for (SizeType i = 0; i < l.Size(); i++) {
-                        p = l[i]["text"].GetString();
-                        addToIndex(true, p, iD, type);
-                    }
-                    //body text
-                    Value &g = d["body_text"];
-                    type = "body_text";
-                    for (SizeType i = 0; i < g.Size(); i++) {
-                        p = g[i]["text"].GetString();
-                        addToIndex(true, p, iD, type);
-                    }
+        if (!d.HasParseError()) {
+            //id
+            Value &id = d["paper_id"];
+            string iD = id.GetString();
+            //title
+            string type = "title";
+            Value &s = d["metadata"];
+            Value &t = s["title"];
+            string z = t.GetString();
+            if (z != "") {
+                docsParsed++;
+                addToIndex(true, z, iD, type);
+                //authors
+                Value &c = s["authors"];
+                type = "authors";
+                string first;
+                string middle;
+                string last;
+                for (SizeType i = 0; i < c.Size(); i++) {
+                    last = c[i]["last"].GetString();
+                    addToIndex(false, last, iD, type);
+                }
+                //abstract
+                Value &l = d["abstract"];
+                type = "abstract";
+                string p;
+                for (SizeType i = 0; i < l.Size(); i++) {
+                    p = l[i]["text"].GetString();
+                    addToIndex(true, p, iD, type);
+                }
+                //body text
+                Value &g = d["body_text"];
+                type = "body_text";
+                for (SizeType i = 0; i < g.Size(); i++) {
+                    p = g[i]["text"].GetString();
+                    addToIndex(true, p, iD, type);
                 }
             }
+        }
     }
-    //words.print();
+    avgNumWrds /= docsParsed;
     return 0;
 }
 bool Indexer::isStpWord(string& word){
@@ -159,7 +109,6 @@ bool Indexer::isStpWord(string& word){
     return false;
 }
 void Indexer::stemm(string& word){
-    //string& val = stemTable.find(word);
     if(stemTable.find(word)){
         string& val = stemTable.getFind();
         word = val;
@@ -189,6 +138,7 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
             if(word.size() > 2) {
                 remPunc(word);
                 if (!isStpWord(word)) {
+                    avgNumWrds++;
                     stemm(word);
                     Word t(word);
                     Word& temp5 = words.find(t);
@@ -216,18 +166,13 @@ void Indexer::addToIndex(bool type, string& passage, string& id, string& loc){
                 names.addAuth(passage, temp6);
             }
             else{
+                numAuth++;
                 AuthIDs t;
                 t.push_back(id);
                 names.addAuth(passage, t);
             }
         }
     }
-}
-AuthIndex& Indexer::getAuthIndex() {
-    return names;
-}
-WordIndex& Indexer::getWordIndex(){
-    return words;
 }
 vector<string>& Indexer::getMatches(vector<string>& top15, string& word){
     char *test = new char[word.length() + 1];
@@ -280,7 +225,4 @@ vector<string>& Indexer::getAuthDocs(string& name){
         cout << "author not found" << endl;
         return temp2.getAuthIDs();
     }
-}
-void Indexer::print(){
-
 }

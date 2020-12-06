@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
             if (option == 1) {
                 q.startQueryUI();
             } else if (option == 2) {
-                //make stats function
+                q.printStats();
             }
             cout<<"Do you wish to choose another option? (y/n) ->";
             cin>>endProg;

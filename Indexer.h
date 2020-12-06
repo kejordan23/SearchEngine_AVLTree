@@ -33,21 +33,24 @@ class Indexer{
         AuthIDs temp2;
         DSHashTable<string, string> stemTable = DSHashTable<string, string>();
         int docNum;
+        int docsParsed;
+        int avgNumWrds;
+        int numAuth;
     public:
     Indexer(){};
     Indexer(Indexer&);
     int getDir_FileSystem();
-    //int getDir_FileSystemDemo(string&);
     bool isStpWord(string&);
     void stemm(string&);
     void remPunc(string&);
     void addToIndex(bool, string&, string&, string&);
-    AuthIndex& getAuthIndex();
-    WordIndex& getWordIndex();
     vector<string>& getMatches(vector<string>&, string& word);
     vector<string>& getWordDocs(string&);
     vector<string>& getAuthDocs(string&);
-    void print();
+    int getDocsParsed(){ return docsParsed;};
+    int getAvgNumWrds(){ return avgNumWrds;};
+    int getTotWrds(){ return words.getNumEntries();};
+    int getTotAuth(){return numAuth;};
 };
 
 #endif //FINALPROJECT_INDEXER_H

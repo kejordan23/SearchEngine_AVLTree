@@ -25,11 +25,15 @@ class DSAVLTree{
     private:
         AVLNode<T>* root;
         bool found;
+        int numEntries;
         void insert(T&, AVLNode<T>*&);
         T& find(T&, AVLNode<T>*&);
         void remove(T&, AVLNode<T>*&);
     public:
-        DSAVLTree(){ root = nullptr;};
+        DSAVLTree(){
+            root = nullptr;
+            numEntries = 0;
+        };
         DSAVLTree(DSAVLTree<T>&);
         ~DSAVLTree(){ clear(root);};
         void copy(AVLNode<T>*&, AVLNode<T>*&);
@@ -40,6 +44,7 @@ class DSAVLTree{
             clear(t->right);
             delete t;
         };
+        int getNumEntries(){ return numEntries;};
         void insert(T& data){
             insert(data, root);
         };
@@ -77,8 +82,10 @@ void DSAVLTree<T>::copy(AVLNode<T>*& first, AVLNode<T>*& second){
 }
 template <typename T>
 void DSAVLTree<T>::insert(T& val, AVLNode<T>*& t){
-    if(t == nullptr)
+    if(t == nullptr) {
         t = new AVLNode(val);
+        numEntries++;
+    }
     else if(val<(t->data)){
         insert(val, t->left);
         if(height(t->left) - height(t->right) == 2){
@@ -87,6 +94,7 @@ void DSAVLTree<T>::insert(T& val, AVLNode<T>*& t){
             else                            //C2
                 doubleWLeftCh(t);
         }
+        numEntries++;
     }
     else if(val>(t->data)){
         insert(val, t->right);
@@ -96,6 +104,7 @@ void DSAVLTree<T>::insert(T& val, AVLNode<T>*& t){
             else                            //C3
                 doubleWRightCh(t);
         }
+        numEntries++;
     }
     else;
     t->height = max(height(t->left), height(t->right))+1;

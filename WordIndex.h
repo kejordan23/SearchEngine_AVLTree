@@ -19,6 +19,7 @@ class WordIndex{
     public:
         WordIndex(){};
         WordIndex(WordIndex& w){ this->words = w.words;};
+        int getNumEntries(){ return words.getNumEntries();};
         void addWord(Word& w){
             words.insert(w);
         };
