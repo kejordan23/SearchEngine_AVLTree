@@ -79,9 +79,10 @@ class Word{
             int index = 0;
             int index2 = 0;
             int size = 15;
+            bool inserted = false;
             if(docsOnly.size()<15)
                 size = docsOnly.size();
-            for(int j = 0; j<size; j++) {
+            for(int j = 0; j<size && top15.size() <size; j++) {
                 for (int i = 0; i < wordFreq.size(); i++) {
                     if (wordFreq[i] > temp && wordFreq[i] <temp2) {
                         temp = wordFreq[i];
@@ -89,12 +90,15 @@ class Word{
                     }
                     else if(wordFreq[i] == temp2 && i != index2){
                         top15.push_back(temp3[i]);
+                        inserted = true;
                     }
                 }
                 temp2 = temp;
                 index2 = index;
                 temp = 0;
-                top15.push_back(temp3[index]);
+                if(!inserted)
+                    top15.push_back(temp3[index]);
+                inserted = false;
             }
         };
         void printDocs(){

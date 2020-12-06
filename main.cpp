@@ -26,9 +26,28 @@ int main(int argc, char* argv[]) {
             cout << "unable to open file" << endl;*/
 
 
+        /*ifstream input;
+        input.open("cs2341_data/0a0cbd4cb08c862deadcb5aaef22a27b770c0791.json");
+        if (!input.is_open())
+            cout << "unable to open file" << endl;*/
         Handler *h;
-        Query q;
-        q.startQueryUI();
+        char endProg;
+        int option;
+        while (endProg != 'n' && endProg != 'N') {
+            cout << "User options: " << endl;
+            cout << "     1. Enter search query" << endl;
+            cout << "     2. Print index stats" << endl;
+            cout << "Please enter the option number here ->";
+            cin >> option;
+            if (option == 1) {
+                Query q;
+                q.startQueryUI();
+            } else if (option == 2) {
+                //make stats function
+            }
+            cout<<"Do you wish to choose another option? (y/n) ->";
+            cin>>endProg;
+        }
 
     }
     return 0;

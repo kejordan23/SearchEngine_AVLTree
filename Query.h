@@ -13,6 +13,11 @@
 #include <sstream>
 #include <unordered_set>
 #include "Handler.h"
+#include "include/rapidjson/rapidjson.h"
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/writer.h"
+#include "include/rapidjson/stringbuffer.h"
+#include "include/rapidjson/istreamwrapper.h"
 
 using namespace std;
 
@@ -34,14 +39,14 @@ class Query: public Handler{
             string temp;
             char check = 'y';
             while ( check != 'n' && check != 'N') {
+                cin.ignore();
                 cout << "Please enter search terms-> ";
                 getline(cin, temp);
                 cout<<"Documents that include these/this word(s)/author are:"<<endl;
                 processWrds(temp);
-                cout<<"Would you like search again? (y/n) ->";
+                cout<<"Would you like to continue searching with this index? (y/n) ->";
                 cin>>check;
                 words.clear();
-                cin.ignore();
             }
         };
         void processWrds(string& t){
@@ -60,7 +65,7 @@ class Query: public Handler{
                 else
                     words.push_back(word);
             }
-            unordered_set<string> f;
+            vector<string> f;
             if(andBool){
                 vector<string> temp1;
                 temp1 = index.getWordDocs(words[0]);
@@ -70,7 +75,7 @@ class Query: public Handler{
                     while (z != temp1.end()) {
                         auto it = find(temp2.begin(), temp2.end(), *z);
                         if (it != temp2.end())
-                            f.insert(*z);
+                            f.push_back(*z);
                         z++;
                     }
                 }
@@ -83,14 +88,16 @@ class Query: public Handler{
                 if(temp1.size() > 0) {
                     auto z = temp1.begin();
                     while (z != temp1.end()) {
-                        f.insert(*z);
+                        f.push_back(*z);
                         z++;
                     }
                 }
                 if(temp2.size()>0){
                     auto y = temp2.begin();
                     while (y != temp2.end()) {
-                        f.insert(*y);
+                        auto it = find(temp1.begin(), temp1.end(), *y);
+                        if(it == temp1.end())
+                            f.push_back(*y);
                         y++;
                     }
                 }
@@ -101,25 +108,25 @@ class Query: public Handler{
                 if(temp1.size() > 0) {
                     auto z = temp1.begin();
                     while (z != temp1.end()) {
-                        f.insert(*z);
+                        f.push_back(*z);
                         //cout<<*z<<endl;
                         z++;
                     }
                 }
             }
-            unordered_set<string> final;//remember this is backwards
+            vector<string> final;//remember this is backwards
             if(authBool){
                 vector<string>& temp4 = index.getAuthDocs(words[words.size()-1]);
                 if(temp4.size() > 0) {
                     auto d = temp4.begin();
                     while (d != temp4.end()) {
-                        auto it = f.find(*d);
+                        auto it = find(f.begin(), f.end(), *d);
                         if (it != f.end()) {
-                            final.insert(*d);
-                            cout<<*d<<endl;
+                            final.push_back(*d);
                         }
                         d++;
                     }
+                    printDocs(final);
                 }
                 authBool = false;
             }
@@ -130,23 +137,102 @@ class Query: public Handler{
                     while (d != f.end()) {
                         auto it = find(temp3.begin(), temp3.end(), *d);
                         if (it == temp3.end()) {
-                            final.insert(*d);
-                            cout<<*d<<endl;
+                            final.push_back(*d);
                         }
                         d++;
                     }
+                    printDocs(final);
                 }
                 notBool = false;
             }
             else{
-                auto z = f.begin();
-                while (z != f.end()) {
-                    cout<<*z<<endl;
-                    z++;
+                final = f;
+                printDocs(final);
+            }
+            char sum = ' ';
+            int num;
+            while (sum!= 'n' && sum != 'N') {
+                cout << "Would you like a summary of an article? (y/n) ->";
+                cin >> sum;
+                if (sum == 'y' || sum == 'Y') {
+                    printDocs(final);
+                    cout << "Input the number of the article you wish to explore ->";
+                    cin >> num;
+                    if (num <= final.size())
+                        printSummary(final[num - 1]);
+                    else {
+                        while (num > final.size()) {
+                            cout << "Please input a valid article number ->" << endl;
+                            cin >> num;
+                        }
+                        printSummary(final[num - 1]);
+                    }
                 }
             }
+
             f.clear();
             final.clear();
+        };
+        void printDocs(vector<string>& final){
+            string temp;
+            Document d;
+            for (int i = 0; i<final.size(); i++){
+                temp = "cs2341_data/"+ final[i]+".json";
+                ifstream fp(temp);
+                IStreamWrapper isw(fp);
+                d.ParseStream(isw);
+
+                StringBuffer buffer;
+                Writer<StringBuffer> writer(buffer);
+                d.Accept(writer);
+
+                if (d.HasParseError()) {
+                    std::cout << "Error  : " << d.GetParseError() << '\n'
+                              << "Offset : " << d.GetErrorOffset() << '\n';
+                }
+                else {
+                    Value &s = d["metadata"];
+                    Value &t = s["title"];
+                    Value &c = s["authors"];
+                    string title = t.GetString();
+                    string first = c[0]["first"].GetString();
+                    string last = c[0]["last"].GetString();
+                    cout<<i+1<<". "<<title<<endl;
+                    cout<<"     Author: "<<first<<" "<<last<<endl;
+                }
+            }
+        };
+        void printSummary(string& id){
+            string temp = "cs2341_data/"+ id+".json";
+            Document d;
+            ifstream fp(temp);
+            IStreamWrapper isw(fp);
+            d.ParseStream(isw);
+
+            StringBuffer buffer;
+            Writer<StringBuffer> writer(buffer);
+            d.Accept(writer);
+
+            if (d.HasParseError()) {
+                std::cout << "Error  : " << d.GetParseError() << '\n'
+                          << "Offset : " << d.GetErrorOffset() << '\n';
+            }
+            Value &s = d["metadata"];
+            Value &t = s["title"];
+            string title = t.GetString();
+            cout<<title<<endl;
+            cout<<endl;
+            Value &l = d["abstract"];
+            if(l.Size() == 0){
+                Value &g = d["body_text"];
+                string f = g[0]["text"].GetString();
+                cout<<f<<endl;
+            }
+            string p;
+            for (SizeType i = 0; i < l.Size(); i++) {
+                p = l[i]["text"].GetString();
+                cout<<"     "<<p<<endl;
+            }
         };
 };
 
